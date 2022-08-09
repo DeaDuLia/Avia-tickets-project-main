@@ -1,0 +1,135 @@
+<div class="">
+  <div class="super_container">
+    <div class="search">
+      <div class="container fill_height">
+        <div class="row fill_height">
+          <div class="col fill_height">
+            <div>
+              <div class="search_panel active">
+                <form (ngSubmit)="onSubmit()" #filterForm="ngForm"
+                      class="search_panel_content d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
+                  <div class="search_item">
+                    <div>откуда</div>
+                    <select class="destination search_input"
+                            required="required"
+                            [(ngModel)]="params!.cityStart"
+                            #cityStart="ngModel"
+                            name="cityStart">
+                      <option *ngFor="let l of location"
+                              value="{{l.city}}">{{l.city}}</option>
+                    </select>
+                    <!--                    <input type="text" class="destination search_input" required="required">-->
+                  </div>
+                  <div class="search_item">
+                    <div>куда</div>
+                    <select class="destination search_input"
+                            required="required"
+                            [(ngModel)]="params!.cityEnd"
+                            #cityEnd="ngModel"
+                            name="cityEnd">
+                      <option *ngFor="let l of location"
+                              value="{{l.city}}">{{l.city}}</option>
+                    </select>
+                    <!--                    <input type="text" class="destination search_input" required="required">-->
+                  </div>
+                  <div class="search_item">
+                    <div>когда</div>
+                    <input type="date"
+                           required="required"
+                           class="check_out search_input"
+                           [(ngModel)]="params!.dateS"
+                           #dateS="ngModel"
+                           name="dateS"
+                           min="{{date | date: 'yyyy-MM-dd'}}"
+                    >
+                  </div>
+                  <div class="search_item" *ngIf="params.dateS">
+                    <div>обратно</div>
+                    <input type="date"
+                           [(ngModel)]="params!.dateE"
+                           #dateE="ngModel"
+                           name="dateE"
+                           class="check_out search_input"
+                           min="{{getDate(dateS.value) | date: 'yyyy-MM-dd'}}"
+                    >
+                  </div>
+
+                  <button type="submit" class="button search_button"
+                          [disabled]="!filterForm.valid">найти<span></span><span></span><span></span>
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div style="margin-top: 5%" *ngIf="isLogin">
+    <div class="container">
+      <div class="search_tabs_container">
+        <div
+          class="search_tabs d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
+          <div
+            class="search_tab active d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
+            <span>Специальные предложения:</span></div>
+        </div>
+      </div>
+      <div class="container container_class_border">
+        <div class="row justify-content-center">
+          <!--Контейнер поиска-->
+          <a class="textfind">Специальные предложения для вашего города:</a>
+          <div class="container">
+          </div>
+        </div>
+        <div style="margin-top: 5%" *ngFor="let ticket of uniqTicket">
+          <div class="search_tabs_container">
+            <div
+              class="search_tabs d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
+              <div
+                class="search_tab active d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
+                <span>Билет № {{ticket.idTicket}}</span></div>
+            </div>
+          </div>
+          <div class="row justify-content-center container_class_border">
+            <div class="container">
+              <!--Дата отправки Дата прибытия Начальная Точка Конечная точка итог-->
+              <div class="row">
+                <div class="col">
+                  <span class="price">{{ticket.price}} ₽</span>
+                </div>
+                <div class="col" style="margin-left: 60%;">
+                  <a style="font-size: 25px;color: #FFFFFF" [routerLink]="['/brasket/'+ticket.idTicket+'/'+ticket.price]" type="button"
+                     class="btn btn-success ">Купить</a>
+                </div>
+              </div>
+              <table class="table table-borderless">
+                <tr>
+                  <td>{{ticket.wayDto.pointFirstDto.locationDto.city}}
+                    - {{ticket.wayDto.pointEndDto.locationDto.city}}</td>
+                  <td></td>
+                  <td>Аэропорт</td>
+                </tr>
+                <tr>
+                  <td>Дата отправки</td>
+                  <td> {{ticket.startDate}}</td>
+                  <td>{{ticket.wayDto.pointFirstDto.airport}} - {{ticket.wayDto.pointEndDto.airport}}</td>
+                </tr>
+                <tr>
+                  <td>Дата прибытия</td>
+                  <td>{{ticket.endDate|date:"yyyy-MM-dd HH:mm"}}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+

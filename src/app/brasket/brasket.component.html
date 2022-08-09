@@ -1,0 +1,192 @@
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<link href="https://bootstraptema.ru/snippets/form/2017/styles.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://bootstraptema.ru/snippets/form/2017/jquery.payform.min.js"></script>
+<script src="https://bootstraptema.ru/snippets/form/2017/script.js"></script>
+
+<div class="container" *ngIf="isLogin;else el">
+  <div class="search_tabs_container">
+    <div
+      class="search_tabs d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
+      <div
+        class="search_tab active d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
+        <span>Билеты к оплате:</span></div>
+    </div>
+  </div>
+  <div class="container container_class_border">
+    <div class="row justify-content-center">
+      <!--Контейнер поиска-->
+      <div class="container">
+      </div>
+    </div>
+    <!--Контейнер билета-->
+    <div style="margin-top: 5%;" *ngFor="let ticket of ticketsArr">
+    <div class="search_tabs_container">
+      <div
+        class="search_tabs d-flex flex-lg-row flex-column align-items-lg-center align-items-start justify-content-lg-between justify-content-start">
+        <div
+          class="search_tab active d-flex flex-row align-items-center justify-content-lg-center justify-content-start">
+          <span>Билет № {{ticket.idTicket}}</span></div>
+      </div>
+    </div>
+    <div class="row justify-content-center container_class_border">
+      <div class="container">
+        <!--Дата отправки Дата прибытия Начальная Точка Конечная точка итог-->
+        <span class="price">{{ticket.price}} ₽</span>
+        <button (click)="setTicket(ticket.idTicket)" type="button" class="btn btn3 btn-danger">Убрать из Корзины</button>
+
+        <table class="table table-borderless">
+          <tr>
+            <td>{{ticket.wayDto.pointFirstDto.locationDto.city}} - {{ticket.wayDto.pointEndDto.locationDto.city}}</td>
+            <td></td>
+            <td>Аэропорт</td>
+          </tr>
+          <tr>
+            <td>Дата отправки</td>
+            <td> {{ticket.startDate|date:"yyyy-mm-dd HH:mm"}}</td>
+            <td>{{ticket.wayDto.pointFirstDto.airport}} - {{ticket.wayDto.pointEndDto.airport}}</td>
+          </tr>
+          <tr>
+            <td>Дата прибытия</td>
+            <td>{{ticket.startDate|date:"yyyy-mm-dd HH:mm"}}</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+    </div>
+    <table style="margin-top: 5%" class="table table-borderless">
+      <tr>
+        <th>Вид дополнительной услуги</th>
+        <th>Цена</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let con of condits">
+        <td>{{con.title}}</td>
+        <td>{{con.price}}</td>
+        <td>
+          <button type="button" class="btn btn4" (click)="onclickCon(con.idAdc)">Добавить</button>
+        </td>
+      </tr>
+    </table>
+
+    <div class="container">
+
+      <div class="creditCardForm">
+        <div class="heading">
+          <h1>Введите данные карты</h1>
+        </div>
+        <div class="payment">
+          <form (ngSubmit)="onSubmit()" #cardF="ngForm">
+            <div class="form-group owner">
+              <label for="owner">Владелец</label>
+              <input type="text"
+                     class="form-control text"
+                     pattern="[A-Za-zA-Яа-яЁё]*"
+                     id="owner"
+                     name="owner"
+                     required="required"
+                     min="5"
+                     [(ngModel)]="card.owner"
+                     #owner="ngModel">
+              <div style="font-size: 20px;color: #AF1C1C" *ngIf="owner.touched && owner.invalid">
+                <div *ngIf="owner.errors.required">Это поле должно быть заполнено</div>
+                <div *ngIf="owner.errors.pattern">Водите имя корректно</div>
+              </div>
+            </div>
+
+            <div class="form-group CVV">
+              <label for="cvv">CVV</label>
+              <input type="text"
+                     minlength="3"
+                     maxlength="3"
+                     onkeyup="this.value = this.value.replace(/[^\d]/,'');"
+                     class="form-control text"
+                     [(ngModel)]="card.ccv"
+                     required="required"
+                     #cvv="ngModel"
+                     name="cvv"
+                     id="cvv">
+              <div style="font-size: 20px;color: #AF1C1C" *ngIf="cvv.touched && cvv.invalid">
+                <div *ngIf="cvv.errors.required">Это поле должно быть заполнено</div>
+                <div *ngIf="cvv.errors.minlength">Поле из 3 символов</div>
+                <div *ngIf="cvv.errors.maxlength">Поле из 3 символов</div>
+              </div>
+            </div>
+            <div class="form-group" id="card-number-field">
+              <label for="cardNumber">Номер Карты</label>
+              <input type="text"
+                     required="required"
+                     class="form-control text"
+                     minlength="16"
+                     maxlength="16"
+                     onkeyup="this.value = this.value.replace(/[^\d]/,'');"
+                     [(ngModel)]="card.card"
+                     #cards="ngModel"
+                     name="cards"
+                     id="cardNumber">
+              <div style="font-size: 20px;color: #AF1C1C" *ngIf="cards.touched && cards.invalid">
+                <div *ngIf="cards.errors.required">Это поле должно быть заполнено</div>
+                <div *ngIf="cards.errors.minlength">Поле из 16 символов</div>
+                <div *ngIf="cards.errors.maxlength">Поле из 16 символов</div>
+              </div>
+            </div>
+            <div class="form-group"
+                 id="expiration-date"
+
+            >
+              <label>Окончание Действия</label>
+              <select
+                required="required"
+                name="dayM"
+                #dayM="ngModel"
+                [(ngModel)]="card.dayM">
+                <option value="01">January</option>
+                <option value="02">February</option>
+                <option value="03">March</option>
+                <option value="04">April</option>
+                <option value="05">May</option>
+                <option value="06">June</option>
+                <option value="07">July</option>
+                <option value="08">August</option>
+                <option value="09">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+              </select>
+              <select
+                required="required"
+                name="dayE"
+                #dayE="ngModel"
+                [(ngModel)]="card.dayE">
+                <option value="21"> 2021</option>
+                <option value="22"> 2022</option>
+                <option value="23"> 2023</option>
+                <option value="24"> 2024</option>
+              </select>
+            </div>
+<!--            <div class="form-group" id="credit_cards">-->
+<!--              <img src="https://bootstraptema.ru/snippets/form/2017/visa.jpg" id="visa">-->
+<!--              <img src="https://bootstraptema.ru/snippets/form/2017/mastercard.jpg" id="mastercard">-->
+<!--              <img src="https://bootstraptema.ru/snippets/form/2017/amex.jpg" id="amex">-->
+<!--            </div>-->
+            <div class="form-group" id="pay-now">
+              <button type="submit" class="btn btn-default" [disabled]="!cardF.valid">Оплатить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<ng-template #el>
+  <div class="container">
+    <div class="row">
+      <div class="noaval">Что бы купить билет, надо войти в профиль</div>
+    </div>
+    <div class="row">
+      <a class="custl" [routerLink]="['/login']">Авторизироваться</a>
+    </div>
+  </div>
+</ng-template>
